@@ -16,7 +16,7 @@ A full-stack e-commerce web application for luxury Indian ethnic wear — Sarees
 
 | Home | Products | Product Detail |
 |------|----------|----------------|
-| ![Home](screenshots/home.png) | ![Shop](screenshots/shop.png) | ![Product](screenshots/products.png) |
+| ![Home](screenshots/home.png) | ![Shop](screenshots/shop.png) | ![Product](screenshots/Products.png) |
 
 | Cart | Orders | Dashboard |
 |------|--------|-----------|
