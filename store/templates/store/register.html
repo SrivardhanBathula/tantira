@@ -1,0 +1,91 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register — SareeStore</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Tenor+Sans&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'store/style.css' %}">
+  <style>
+    .auth-wrapper { max-width: 460px; margin: 60px auto; padding: 0 20px 80px; }
+    .auth-card { background:#fff; border:1px solid var(--border); border-radius:2px; overflow:hidden; }
+    .auth-header { background:var(--charcoal); padding:36px 40px; text-align:center; }
+    .auth-header .logo-text { font-family:'Cormorant Garamond',serif; font-size:1.4rem; color:#fff; letter-spacing:.2em; }
+    .auth-header h2 { font-family:'Cormorant Garamond',serif; font-size:1.8rem; font-weight:300; color:var(--gold-light); margin-top:8px; letter-spacing:.06em; }
+    .auth-body { padding:36px 40px; }
+    .auth-messages { margin-bottom:20px; }
+    .auth-msg { padding:10px 16px; border-radius:2px; font-size:.84rem; margin-bottom:8px; }
+    .auth-msg.error { background:#F8D7DA; color:#721C24; border:1px solid #F5C6CB; }
+    .auth-msg.success { background:#D4EDDA; color:#155724; border:1px solid #C3E6CB; }
+    .form-row { margin-bottom:20px; }
+    .form-row label { display:block; font-family:'Tenor Sans',sans-serif; font-size:.7rem; letter-spacing:.18em; text-transform:uppercase; color:var(--muted); margin-bottom:7px; }
+    .form-row input { width:100%; padding:12px 14px; border:1px solid var(--border); border-radius:1px; font-family:'DM Sans',sans-serif; font-size:.9rem; color:var(--charcoal); background:var(--ivory); outline:none; transition:border-color .2s; box-sizing:border-box; }
+    .form-row input:focus { border-color:var(--gold); background:#fff; }
+    .auth-submit { width:100%; padding:14px; background:var(--charcoal); color:#fff; font-family:'Tenor Sans',sans-serif; font-size:.78rem; letter-spacing:.2em; text-transform:uppercase; border:none; border-radius:1px; cursor:pointer; transition:background .25s; margin-top:8px; }
+    .auth-submit:hover { background:var(--crimson); }
+    .auth-footer { text-align:center; padding:20px 40px 32px; font-size:.84rem; color:var(--muted); }
+    .auth-footer a { color:var(--crimson); text-decoration:none; }
+    .auth-footer a:hover { text-decoration:underline; }
+    .divider { width:40px; height:1px; background:var(--gold); margin:0 auto 28px; }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="logo">TANTIRA</div>
+    <ul class="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/login/">Login</a></li>
+    </ul>
+  </nav>
+
+  <div class="auth-wrapper">
+    <div class="auth-card">
+      <div class="auth-header">
+        <div class="logo-text">TANTIRA</div>
+        <h2>Create Account</h2>
+      </div>
+      <div class="auth-body">
+        <div class="divider"></div>
+
+        {% if messages %}
+        <div class="auth-messages">
+          {% for msg in messages %}
+            <div class="auth-msg {% if msg.tags == 'error' %}error{% else %}success{% endif %}">{{ msg }}</div>
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        <form method="POST">
+          {% csrf_token %}
+          <div class="form-row">
+            <label>Username</label>
+            <input type="text" name="username" placeholder="Choose a username" required autofocus>
+          </div>
+          <div class="form-row">
+            <label>Email Address</label>
+            <input type="email" name="email" placeholder="your@email.com" required>
+          </div>
+          <div class="form-row">
+            <label>Password</label>
+            <input type="password" name="password1" placeholder="Create a password" required>
+          </div>
+          <div class="form-row">
+            <label>Confirm Password</label>
+            <input type="password" name="password2" placeholder="Repeat your password" required>
+          </div>
+          <button type="submit" class="auth-submit">Create Account →</button>
+        </form>
+      </div>
+      <div class="auth-footer">
+        Already have an account? <a href="{% url 'login' %}">Sign in</a>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <p>© 2026 SareeStore &nbsp;·&nbsp; Threads of Tradition</p>
+  </footer>
+</body>
+</html>

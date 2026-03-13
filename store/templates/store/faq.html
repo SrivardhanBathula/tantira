@@ -1,0 +1,97 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FAQ — Tantira</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Tenor+Sans&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'store/style.css' %}">
+  <style>
+    :root { --crimson:#8B1A1A; --gold:#C9963A; --charcoal:#1C1410; --ivory:#FAF6F0; --cream:#F5EFE6; --border:#E8DDD0; --muted:#7A6A5A; }
+    body { background:var(--ivory); }
+    .faq-hero { background:var(--charcoal); padding:80px 48px; text-align:center; }
+    .faq-hero h1 { font-family:'Cormorant Garamond',serif; font-size:3rem; font-weight:300; color:#fff; letter-spacing:.1em; margin-bottom:12px; }
+    .faq-hero p { font-family:'Tenor Sans',sans-serif; font-size:.85rem; letter-spacing:.2em; text-transform:uppercase; color:var(--gold); }
+    .faq-wrapper { max-width:760px; margin:0 auto; padding:60px 24px 80px; }
+    .faq-category { font-family:'Tenor Sans',sans-serif; font-size:.72rem; letter-spacing:.22em; text-transform:uppercase; color:var(--gold); margin:40px 0 16px; }
+    .faq-item { border-bottom:1px solid var(--border); }
+    .faq-question { width:100%; background:none; border:none; padding:20px 0; display:flex; justify-content:space-between; align-items:center; cursor:pointer; font-family:'Cormorant Garamond',serif; font-size:1.15rem; font-weight:400; color:var(--charcoal); text-align:left; gap:16px; }
+    .faq-question:hover { color:var(--crimson); }
+    .faq-icon { font-size:1.2rem; color:var(--gold); transition:transform .3s; flex-shrink:0; }
+    .faq-answer { display:none; padding:0 0 20px; font-size:.9rem; color:var(--muted); line-height:1.8; }
+    .faq-item.open .faq-answer { display:block; }
+    .faq-item.open .faq-icon { transform:rotate(45deg); }
+    .faq-cta { background:var(--cream); border:1px solid var(--border); padding:40px; text-align:center; margin-top:60px; border-radius:2px; }
+    .faq-cta h3 { font-family:'Cormorant Garamond',serif; font-size:1.6rem; font-weight:400; margin-bottom:12px; }
+    .faq-cta p { font-size:.88rem; color:var(--muted); margin-bottom:20px; }
+    .faq-cta a { padding:12px 28px; background:var(--charcoal); color:#fff; font-family:'Tenor Sans',sans-serif; font-size:.76rem; letter-spacing:.16em; text-transform:uppercase; text-decoration:none; border-radius:1px; transition:background .25s; display:inline-block; }
+    .faq-cta a:hover { background:var(--crimson); }
+    footer { text-align:center; padding:40px; font-family:'Tenor Sans',sans-serif; font-size:.72rem; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); border-top:1px solid var(--border); }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="logo">TANTIRA</div>
+    <ul class="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/cart/">Cart</a></li>
+      <li><a href="/contact/">Contact</a></li>
+      {% if user.is_authenticated %}
+        <li><a href="/profile/" style="color:var(--gold);">{{ user.username }}</a></li>
+        <li><a href="/logout/">Logout</a></li>
+      {% else %}
+        <li><a href="/login/">Login</a></li>
+      {% endif %}
+    </ul>
+  </nav>
+
+  <div class="faq-hero">
+    <h1>Frequently Asked Questions</h1>
+    <p>Everything you need to know about Tantira</p>
+  </div>
+
+  <div class="faq-wrapper">
+
+    <div class="faq-category">Orders & Delivery</div>
+    {% for q, a in faqs_orders %}
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)">{{ q }}<span class="faq-icon">+</span></button>
+      <div class="faq-answer">{{ a }}</div>
+    </div>
+    {% endfor %}
+
+    <div class="faq-category">Products & Quality</div>
+    {% for q, a in faqs_products %}
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)"><span>{{ q }}</span><span class="faq-icon">+</span></button>
+      <div class="faq-answer">{{ a }}</div>
+    </div>
+    {% endfor %}
+
+    <div class="faq-category">Returns & Payments</div>
+    {% for q, a in faqs_returns %}
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)"><span>{{ q }}</span><span class="faq-icon">+</span></button>
+      <div class="faq-answer">{{ a }}</div>
+    </div>
+    {% endfor %}
+
+    <div class="faq-cta">
+      <h3>Still have questions?</h3>
+      <p>Our team is happy to help you with anything.</p>
+      <a href="/contact/">Contact Us</a>
+    </div>
+  </div>
+
+  <footer>© 2026 Tantira &nbsp;·&nbsp; Threads of Tradition</footer>
+
+  <script>
+    function toggleFaq(btn) {
+      const item = btn.closest('.faq-item');
+      item.classList.toggle('open');
+    }
+  </script>
+</body>
+</html>

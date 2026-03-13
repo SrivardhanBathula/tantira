@@ -1,0 +1,73 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Cart — TANTIRA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Tenor+Sans&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'store/style.css' %}">
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="logo">TANTIRA</div>
+    <ul class="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/cart/">Cart</a></li>
+      <li><a href="/wishlist/">❤ Wishlist</a></li>
+    </ul>
+  </nav>
+
+  <section class="products">
+    <h2>Your Cart</h2>
+
+    {% if items %}
+
+      <div class="cart-table">
+        {% for item in items %}
+        <div class="cart-item">
+          {% if item.saree.image %}
+            <img src="{{ item.saree.image.url }}" alt="{{ item.saree.name }}">
+          {% endif %}
+
+          <div class="cart-item-info">
+            <h3>{{ item.saree.name }}</h3>
+            <p class="price">₹{{ item.saree.price }}</p>
+
+            <div class="qty-control">
+              <a href="{% url 'decrease_qty' item.saree.id %}" class="qty-btn">−</a>
+              <span class="qty-value">{{ item.qty }}</span>
+              <a href="{% url 'increase_qty' item.saree.id %}" class="qty-btn">+</a>
+            </div>
+          </div>
+
+          <div class="cart-item-right">
+            <span class="cart-subtotal">₹{{ item.subtotal }}</span>
+            <a href="{% url 'remove_from_cart' item.saree.id %}" class="remove-link">Remove</a>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <div class="cart-total-row">
+        <span>Order Total</span>
+        <span>₹{{ total_price }}</span>
+      </div>
+
+      <div class="cart-actions">
+        <a href="{% url 'checkout' %}" class="cart-btn" style="width:auto; padding:14px 48px; display:inline-block; text-decoration:none; text-align:center;">Proceed to Checkout →</a>
+      </div>
+
+    {% else %}
+      <p class="empty-state">Your cart is empty — let's change that.</p>
+    {% endif %}
+  </section>
+
+  <footer class="footer">
+    <p>© 2026 TANTIRA &nbsp;·&nbsp; Threads of Tradition</p>
+  </footer>
+
+</body>
+</html>

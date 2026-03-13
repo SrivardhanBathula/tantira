@@ -1,0 +1,138 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cancel Order — SareeStore</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Tenor+Sans&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'store/style.css' %}">
+  <style>
+    .cancel-card {
+      max-width: 500px;
+      margin: 60px auto;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .cancel-card-header {
+      background: #F8D7DA;
+      padding: 28px 36px;
+      text-align: center;
+      border-bottom: 1px solid #F5C6CB;
+    }
+    .cancel-card-header .icon { font-size: 2.5rem; display: block; margin-bottom: 10px; }
+    .cancel-card-header h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.8rem;
+      font-weight: 400;
+      color: #721C24;
+    }
+    .cancel-card-body {
+      padding: 32px 36px;
+    }
+    .cancel-detail {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: .88rem;
+      color: var(--muted);
+    }
+    .cancel-detail span:last-child { color: var(--charcoal); font-weight: 500; }
+    .cancel-warning {
+      background: #FFF3CD;
+      border: 1px solid #FFEEBA;
+      padding: 14px 18px;
+      border-radius: 2px;
+      font-size: .84rem;
+      color: #856404;
+      margin: 20px 0;
+      line-height: 1.6;
+    }
+    .cancel-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+    }
+    .btn {
+      flex: 1;
+      padding: 13px 20px;
+      font-family: 'Tenor Sans', sans-serif;
+      font-size: .75rem;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      border-radius: 1px;
+      text-decoration: none;
+      text-align: center;
+      display: inline-block;
+      cursor: pointer;
+      border: 1px solid;
+      transition: background .2s, color .2s;
+    }
+    .btn-outline { background: transparent; color: var(--charcoal); border-color: var(--border); }
+    .btn-outline:hover { background: var(--charcoal); color: #fff; border-color: var(--charcoal); }
+    .btn-danger  { background: #C0392B; color: #fff; border-color: #C0392B; }
+    .btn-danger:hover { background: #922B21; border-color: #922B21; }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="logo">TANTIRA</div>
+    <ul class="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/my-orders/">My Orders</a></li>
+    </ul>
+  </nav>
+
+  <section class="products">
+    <div class="cancel-card">
+
+      <div class="cancel-card-header">
+        <span class="icon">⚠️</span>
+        <h2>Cancel Order?</h2>
+      </div>
+
+      <div class="cancel-card-body">
+        <div class="cancel-detail">
+          <span>Order ID</span>
+          <span>#{{ order.id }}</span>
+        </div>
+        <div class="cancel-detail">
+          <span>Customer</span>
+          <span>{{ order.customer_name }}</span>
+        </div>
+        <div class="cancel-detail">
+          <span>Amount</span>
+          <span>₹{{ order.total_amount }}</span>
+        </div>
+        <div class="cancel-detail">
+          <span>Current Status</span>
+          <span>{{ order.get_status_display }}</span>
+        </div>
+
+        <div class="cancel-warning">
+          ⚠️ This action cannot be undone. Once cancelled, the order will not be processed or shipped.
+        </div>
+
+        <form method="POST">
+          {% csrf_token %}
+          <div class="cancel-actions">
+            <a href="{% url 'track_order' order.id %}" class="btn btn-outline">Keep Order</a>
+            <button type="submit" class="btn btn-danger">Yes, Cancel</button>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p>© 2026 SareeStore &nbsp;·&nbsp; Threads of Tradition</p>
+  </footer>
+
+</body>
+</html>

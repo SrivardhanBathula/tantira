@@ -1,0 +1,355 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Track Order #{{ order.id }} — TANTIRA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Tenor+Sans&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'store/style.css' %}">
+  <style>
+    .track-wrapper { max-width: 760px; margin: 0 auto; }
+
+    /* ── Order meta card ── */
+    .track-meta {
+      background: var(--cream);
+      border: 1px solid var(--border);
+      padding: 28px 32px;
+      border-radius: 2px;
+      margin-bottom: 32px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px 32px;
+    }
+    .track-meta-item label {
+      font-family: 'Tenor Sans', sans-serif;
+      font-size: .68rem;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      display: block;
+      margin-bottom: 4px;
+    }
+    .track-meta-item span {
+      font-size: .92rem;
+      color: var(--charcoal);
+    }
+    .track-meta-item .big {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--crimson);
+    }
+
+    /* ── Progress bar ── */
+    .progress-section {
+      background: #fff;
+      border: 1px solid var(--border);
+      padding: 36px 32px;
+      border-radius: 2px;
+      margin-bottom: 32px;
+    }
+
+    .progress-section h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.4rem;
+      font-weight: 400;
+      color: var(--charcoal);
+      margin-bottom: 32px;
+      letter-spacing: .04em;
+    }
+
+    /* Cancelled banner */
+    .cancelled-banner {
+      text-align: center;
+      padding: 28px;
+      background: #F8D7DA;
+      border: 1px solid #F5C6CB;
+      border-radius: 2px;
+      color: #721C24;
+    }
+    .cancelled-banner .icon { font-size: 2.5rem; display: block; margin-bottom: 12px; }
+    .cancelled-banner h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.6rem; font-weight: 400; }
+    .cancelled-banner p  { font-size: .88rem; margin-top: 8px; opacity: .8; }
+
+    /* Step tracker */
+    .steps-track {
+      display: flex;
+      align-items: flex-start;
+      position: relative;
+    }
+
+    /* Grey base line */
+    .steps-track::before {
+      content: '';
+      position: absolute;
+      top: 19px;
+      left: 10%; right: 10%;
+      height: 2px;
+      background: var(--border);
+      z-index: 0;
+    }
+    /* Charcoal fill line — width driven by --progress CSS variable from view */
+    .steps-track::after {
+      content: '';
+      position: absolute;
+      top: 19px;
+      left: 10%;
+      height: 2px;
+      width: var(--progress, 0%);
+      max-width: 80%;
+      background: var(--charcoal);
+      z-index: 1;
+      transition: width .6s ease;
+    }
+
+    .step-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .step-circle {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      transition: all .3s;
+    }
+
+    .step-item.done .step-circle {
+      background: var(--charcoal);
+      border-color: var(--charcoal);
+    }
+
+    .step-item.active .step-circle {
+      background: var(--crimson);
+      border-color: var(--crimson);
+      box-shadow: 0 0 0 4px rgba(139,26,26,.15);
+    }
+
+    .step-label {
+      font-family: 'Tenor Sans', sans-serif;
+      font-size: .68rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .step-item.done .step-label,
+    .step-item.active .step-label {
+      color: var(--charcoal);
+    }
+
+    /* Progress fill line */
+    .progress-fill {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      height: 2px;
+      background: var(--charcoal);
+      z-index: 0;
+      transition: width .5s ease;
+    }
+
+    /* ── Items list ── */
+    .track-items {
+      background: #fff;
+      border: 1px solid var(--border);
+      padding: 28px 32px;
+      border-radius: 2px;
+      margin-bottom: 32px;
+    }
+    .track-items h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.2rem;
+      margin-bottom: 20px;
+      color: var(--charcoal);
+    }
+    .track-item-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .track-item-row:last-child { border-bottom: none; }
+    .track-item-row img {
+      width: 52px; height: 70px;
+      object-fit: cover; border-radius: 1px;
+    }
+    .track-item-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem; font-weight: 600;
+    }
+    .track-item-qty { font-size: .82rem; color: var(--muted); }
+    .track-item-price {
+      margin-left: auto;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem; font-weight: 600;
+      color: var(--crimson);
+    }
+
+    /* ── Tracking note ── */
+    .track-note {
+      background: #FFF9E6;
+      border: 1px solid #F0E68C;
+      padding: 16px 24px;
+      border-radius: 2px;
+      margin-bottom: 32px;
+      font-size: .88rem;
+      color: #6B5B00;
+    }
+    .track-note strong { display: block; margin-bottom: 4px; font-size: .72rem; letter-spacing: .12em; text-transform: uppercase; }
+
+    .track-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+
+    .btn-sm {
+      padding: 11px 28px;
+      font-family: 'Tenor Sans', sans-serif;
+      font-size: .75rem;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      border-radius: 1px;
+      text-decoration: none;
+      display: inline-block;
+      cursor: pointer;
+      border: 1px solid;
+      transition: background .2s, color .2s;
+    }
+    .btn-dark    { background: var(--charcoal); color: #fff; border-color: var(--charcoal); }
+    .btn-dark:hover { background: var(--crimson); border-color: var(--crimson); }
+    .btn-outline { background: transparent; color: var(--charcoal); border-color: var(--border); }
+    .btn-outline:hover { background: var(--charcoal); color: #fff; border-color: var(--charcoal); }
+    .btn-danger  { background: transparent; color: #C0392B; border-color: #C0392B; }
+    .btn-danger:hover { background: #C0392B; color: #fff; }
+
+    @media (max-width: 600px) {
+      .track-meta { grid-template-columns: 1fr; }
+      .step-label { font-size: .6rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="logo">TANTIRA</div>
+    <ul class="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/cart/">Cart</a></li>
+      <li><a href="/my-orders/">My Orders</a></li>
+    </ul>
+  </nav>
+
+  <section class="products">
+    <h2>🚚 Track Order #{{ order.id }}</h2>
+
+    <div class="track-wrapper">
+
+      <!-- Order meta -->
+      <div class="track-meta">
+        <div class="track-meta-item">
+          <label>Customer</label>
+          <span>{{ order.customer_name }}</span>
+        </div>
+        <div class="track-meta-item">
+          <label>Order Total</label>
+          <span class="big">₹{{ order.total_amount }}</span>
+        </div>
+        <div class="track-meta-item">
+          <label>Phone</label>
+          <span>{{ order.phone }}</span>
+        </div>
+        <div class="track-meta-item">
+          <label>Placed On</label>
+          <span>{{ order.created_at|date:"d M Y, h:i A" }}</span>
+        </div>
+        <div class="track-meta-item" style="grid-column: 1 / -1;">
+          <label>Delivery Address</label>
+          <span>{{ order.address }}, {{ order.city }} — {{ order.pincode }}</span>
+        </div>
+      </div>
+
+      <!-- Progress tracker -->
+      <div class="progress-section">
+        <h3>Order Progress</h3>
+
+        {% if order.status == "cancelled" %}
+          <div class="cancelled-banner">
+            <span class="icon">❌</span>
+            <h3>Order Cancelled</h3>
+            {% if order.tracking_note %}
+              <p>{{ order.tracking_note }}</p>
+            {% endif %}
+          </div>
+
+        {% else %}
+          <div class="steps-track" id="stepsTrack"
+                 style="--progress: {{ progress_pct }}%">
+            <div class="progress-fill"></div>
+
+            {% for step in steps %}
+              <div class="step-item {% if forloop.counter0 < current_step %}done{% elif forloop.counter0 == current_step %}active{% endif %}"
+                   data-index="{{ forloop.counter0 }}">
+                <div class="step-circle">{{ step.icon }}</div>
+                <div class="step-label">{{ step.label }}</div>
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Tracking note -->
+      {% if order.tracking_note and order.status != "cancelled" %}
+      <div class="track-note">
+        <strong>📝 Update from SareeStore</strong>
+        {{ order.tracking_note }}
+      </div>
+      {% endif %}
+
+      <!-- Order items -->
+      <div class="track-items">
+        <h3>Items in this Order</h3>
+        {% for item in order.items.all %}
+        <div class="track-item-row">
+          {% if item.saree.image %}
+            <img src="{{ item.saree.image.url }}" alt="{{ item.saree.name }}">
+          {% endif %}
+          <div>
+            <div class="track-item-name">{{ item.saree.name }}</div>
+            <div class="track-item-qty">Qty: {{ item.quantity }}</div>
+          </div>
+          <div class="track-item-price">₹{{ item.subtotal }}</div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <!-- Actions -->
+      <div class="track-actions">
+        <a href="{% url 'my_orders' %}" class="btn-sm btn-outline">← My Orders</a>
+        {% if order.can_cancel %}
+          <a href="{% url 'cancel_order' order.id %}" class="btn-sm btn-danger">Cancel Order</a>
+        {% endif %}
+      </div>
+
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p>© 2026 SareeStore &nbsp;·&nbsp; Threads of Tradition</p>
+  </footer>
+
+  <!-- Progress bar handled by CSS custom property --progress on .steps-track -->
+
+</body>
+</html>

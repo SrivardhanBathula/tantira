@@ -1,0 +1,192 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout — Tantira</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Tenor+Sans&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'store/style.css' %}">
+  <style>
+    .checkout-layout { max-width:900px; margin:0 auto; display:grid; grid-template-columns:1fr 380px; gap:40px; align-items:start; }
+    .checkout-form-wrap { }
+    .checkout-sidebar { }
+    .order-summary-card { background:var(--cream); border:1px solid var(--border); padding:28px; border-radius:2px; margin-bottom:20px; }
+    .order-summary-card h3 { font-family:'Cormorant Garamond',serif; font-size:1.3rem; font-weight:400; margin-bottom:20px; }
+    .summary-item { display:flex; gap:12px; align-items:center; padding:10px 0; border-bottom:1px solid var(--border); }
+    .summary-item:last-child { border-bottom:none; }
+    .summary-item img { width:44px; height:58px; object-fit:cover; border-radius:1px; }
+    .summary-item-name { font-size:.88rem; color:var(--charcoal); flex:1; }
+    .summary-item-price { font-family:'Cormorant Garamond',serif; font-size:1rem; font-weight:600; color:var(--crimson); }
+    .totals-block { margin-top:16px; }
+    .totals-row { display:flex; justify-content:space-between; font-size:.88rem; color:var(--muted); padding:6px 0; }
+    .totals-row.discount { color:#155724; }
+    .totals-row.grand { border-top:1px solid var(--charcoal); margin-top:8px; padding-top:12px; font-family:'Cormorant Garamond',serif; font-size:1.4rem; font-weight:600; color:var(--crimson); }
+
+    /* Coupon box */
+    .coupon-card { background:#fff; border:1px solid var(--border); padding:20px 24px; border-radius:2px; }
+    .coupon-card h4 { font-family:'Tenor Sans',sans-serif; font-size:.75rem; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); margin-bottom:12px; }
+    .coupon-applied { display:flex; align-items:center; justify-content:space-between; background:#D4EDDA; border:1px solid #C3E6CB; padding:10px 14px; border-radius:2px; }
+    .coupon-applied span { font-size:.88rem; color:#155724; font-weight:500; }
+    .coupon-applied a { font-size:.75rem; color:#721C24; text-decoration:none; }
+    .coupon-row { display:flex; gap:0; }
+    .coupon-input { flex:1; padding:10px 14px; border:1px solid var(--border); border-right:none; border-radius:1px 0 0 1px; font-family:'DM Sans',sans-serif; font-size:.88rem; outline:none; }
+    .coupon-input:focus { border-color:var(--gold); }
+    .coupon-btn { padding:10px 16px; background:var(--charcoal); color:#fff; border:none; border-radius:0 1px 1px 0; font-family:'Tenor Sans',sans-serif; font-size:.72rem; letter-spacing:.1em; text-transform:uppercase; cursor:pointer; transition:background .2s; }
+    .coupon-btn:hover { background:var(--crimson); }
+
+    /* Payment options */
+    .payment-options { display:flex; flex-direction:column; gap:10px; }
+    .pay-option { display:flex; align-items:center; gap:12px; padding:14px 16px; border:1px solid var(--border); border-radius:2px; cursor:pointer; transition:border-color .2s, background .2s; }
+    .pay-option input { display:none; }
+    .pay-option.active { border-color:var(--charcoal); background:var(--cream); }
+    .pay-option.disabled { opacity:.5; cursor:not-allowed; }
+    .pay-icon { font-size:1.2rem; }
+    .pay-name { flex:1; font-size:.88rem; color:var(--charcoal); font-family:'DM Sans',sans-serif; }
+    .pay-badge { padding:3px 10px; border-radius:20px; font-family:'Tenor Sans',sans-serif; font-size:.62rem; letter-spacing:.1em; text-transform:uppercase; }
+    .pay-badge.available { background:#D4EDDA; color:#155724; }
+    .pay-badge.coming { background:#FFF3CD; color:#856404; }
+
+    @media(max-width:768px) {
+      .checkout-layout { grid-template-columns:1fr; }
+      .checkout-sidebar { order:-1; }
+      section.products { padding:48px 20px; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="logo">TANTIRA</div>
+    <ul class="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/cart/">Cart</a></li>
+    </ul>
+  </nav>
+
+  <section class="products">
+    <h2>Checkout</h2>
+
+    {% if messages %}
+    <div style="max-width:900px; margin:0 auto 20px;">
+      {% for msg in messages %}
+        <div style="padding:10px 16px; border-radius:2px; font-size:.84rem; margin-bottom:8px;
+             {% if msg.tags == 'error' %}background:#F8D7DA; color:#721C24; border:1px solid #F5C6CB;
+             {% else %}background:#D4EDDA; color:#155724; border:1px solid #C3E6CB;{% endif %}">
+          {{ msg }}
+        </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="checkout-layout">
+
+      <!-- LEFT: Delivery form -->
+      <div class="checkout-form-wrap">
+        <form method="POST" class="checkout-form">
+          {% csrf_token %}
+          <div class="form-row"><label>Full Name</label>
+            <input type="text" name="name" placeholder="Your name" required
+                   {% if user.is_authenticated %}value="{{ user.get_full_name|default:user.username }}"{% endif %}>
+          </div>
+          <div class="form-row"><label>Email Address</label>
+            <input type="email" name="email" placeholder="your@email.com" required
+                   {% if user.is_authenticated and user.email %}value="{{ user.email }}"{% endif %}>
+          </div>
+          <div class="form-row"><label>Phone Number</label>
+            <input type="text" name="phone" placeholder="+91 00000 00000" required>
+          </div>
+          <div class="form-row"><label>Delivery Address</label>
+            <textarea name="address" placeholder="House no., Street, Landmark..." required></textarea>
+          </div>
+          <div class="form-grid">
+            <div class="form-row"><label>City</label><input type="text" name="city" placeholder="City" required></div>
+            <div class="form-row"><label>Pincode</label><input type="text" name="pincode" placeholder="000000" required></div>
+          </div>
+          <!-- Payment Method -->
+          <div class="form-row" style="margin-bottom:20px;">
+            <label style="display:block; font-family:'Tenor Sans',sans-serif; font-size:.7rem; letter-spacing:.18em; text-transform:uppercase; color:var(--muted); margin-bottom:10px;">Payment Method</label>
+            <div style="display:flex; flex-direction:column; gap:10px;">
+
+              <label style="display:flex; align-items:center; gap:12px; padding:14px 16px; border:2px solid var(--charcoal); border-radius:2px; background:var(--cream); cursor:pointer;">
+                <input type="radio" name="payment" value="cod" checked>
+                <span style="font-family:Tenor Sans,sans-serif; font-size:.7rem; letter-spacing:.1em; color:var(--charcoal); background:#eee; padding:4px 8px; border-radius:2px;">COD</span>
+                <span style="flex:1; font-size:.88rem; color:var(--charcoal);">Cash on Delivery</span>
+                <span style="padding:3px 10px; border-radius:20px; background:#D4EDDA; color:#155724; font-family:'Tenor Sans',sans-serif; font-size:.62rem; letter-spacing:.1em; text-transform:uppercase;">Available</span>
+              </label>
+
+              <label style="display:flex; align-items:center; gap:12px; padding:14px 16px; border:1px solid var(--border); border-radius:2px; cursor:pointer;">
+                <input type="radio" name="payment" value="razorpay">
+                <span style="font-family:Tenor Sans,sans-serif; font-size:.7rem; letter-spacing:.1em; color:var(--charcoal); background:#eee; padding:4px 8px; border-radius:2px;">UPI</span>
+                <span style="flex:1; font-size:.88rem; color:var(--charcoal);">Razorpay / UPI</span>
+                
+              </label>
+
+              <label style="display:flex; align-items:center; gap:12px; padding:14px 16px; border:1px solid var(--border); border-radius:2px; cursor:pointer;">
+                <input type="radio" name="payment" value="card">
+                <span style="font-family:Tenor Sans,sans-serif; font-size:.7rem; letter-spacing:.1em; color:var(--charcoal); background:#eee; padding:4px 8px; border-radius:2px;">CARD</span>
+                <span style="flex:1; font-size:.88rem; color:var(--charcoal);">Credit / Debit Card</span>
+                
+              </label>
+
+              <label style="display:flex; align-items:center; gap:12px; padding:14px 16px; border:1px solid var(--border); border-radius:2px; cursor:pointer;">
+                <input type="radio" name="payment" value="netbanking">
+                <span style="font-family:Tenor Sans,sans-serif; font-size:.7rem; letter-spacing:.1em; color:var(--charcoal); background:#eee; padding:4px 8px; border-radius:2px;">NET</span>
+                <span style="flex:1; font-size:.88rem; color:var(--charcoal);">Net Banking</span>
+                
+              </label>
+
+            </div>
+          </div>
+          <button class="cart-btn" type="submit">Place Order →</button>
+        </form>
+      </div>
+
+      <!-- RIGHT: Order summary + coupon -->
+      <div class="checkout-sidebar">
+
+        <!-- Coupon -->
+        <div class="coupon-card" style="margin-bottom:16px;">
+          <h4>Promo Code</h4>
+          {% if coupon %}
+            <div class="coupon-applied">
+              <span>✓ {{ coupon_code }} — {{ coupon.discount_pct }}% off</span>
+              <a href="{% url 'remove_coupon' %}">Remove</a>
+            </div>
+          {% else %}
+            <form method="POST" action="{% url 'apply_coupon' %}" class="coupon-row">
+              {% csrf_token %}
+              <input type="text" name="coupon_code" class="coupon-input" placeholder="Enter code">
+              <button type="submit" class="coupon-btn">Apply</button>
+            </form>
+          {% endif %}
+        </div>
+
+        <!-- Order summary -->
+        <div class="order-summary-card">
+          <h3>Order Summary</h3>
+          {% for item in items %}
+          <div class="summary-item">
+            {% if item.saree.image %}<img src="{{ item.saree.image.url }}" alt="{{ item.saree.name }}">{% endif %}
+            <span class="summary-item-name">{{ item.saree.name }} × {{ item.qty }}</span>
+            <span class="summary-item-price">₹{{ item.subtotal }}</span>
+          </div>
+          {% endfor %}
+          <div class="totals-block">
+            <div class="totals-row"><span>Subtotal</span><span>₹{{ subtotal }}</span></div>
+            {% if discount %}
+            <div class="totals-row discount"><span>Discount ({{ coupon.discount_pct }}%)</span><span>−₹{{ discount }}</span></div>
+            {% endif %}
+            <div class="totals-row grand"><span>Total</span><span>₹{{ total_price }}</span></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p>© 2026 Tantira &nbsp;·&nbsp; Threads of Tradition</p>
+  </footer>
+</body>
+</html>

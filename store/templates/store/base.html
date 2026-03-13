@@ -1,0 +1,134 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tantira</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Tenor+Sans&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'store/style.css' %}">
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="logo">TANTIRA</div>
+
+    <ul class="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="#products">Shop</a></li>
+      <li>
+        <a href="/cart/">
+          Cart
+          {% if cart_count > 0 %}
+            <span class="cart-badge">{{ cart_count }}</span>
+          {% endif %}
+        </a>
+      </li>
+      <li><a href="/wishlist/">Wishlist</a></li>
+      <li><a href="/about/">About</a></li>
+      <li><a href="/faq/">FAQ</a></li>
+      <li><a href="/contact/">Contact</a></li>
+      <li><a href="/my-orders/">My Orders</a></li>
+      {% if user.is_authenticated %}
+        <li><a href="/profile/" style="color:var(--gold);">{{ user.username }}</a></li>
+        <li><a href="/logout/">Logout</a></li>
+      {% else %}
+        <li><a href="/login/">Login</a></li>
+        <li><a href="/register/">Register</a></li>
+      {% endif %}
+    </ul>
+  </nav>
+
+  {% block content %}{% endblock %}
+
+  <footer class="footer-main">
+    <div class="footer-grid">
+
+      <!-- Brand -->
+      <div class="footer-brand">
+        <div class="footer-logo">TANTIRA</div>
+        <p class="footer-tagline">Threads of Tradition,<br>Woven with Love.</p>
+        <div class="footer-social">
+          <a href="https://instagram.com" target="_blank" class="social-btn">Instagram</a>
+          <a href="https://facebook.com" target="_blank" class="social-btn">Facebook</a>
+          <a href="https://pinterest.com" target="_blank" class="social-btn">Pinterest</a>
+        </div>
+      </div>
+
+      <!-- Quick Links -->
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/#products">Shop</a></li>
+          <li><a href="/about/">About Us</a></li>
+          <li><a href="/contact/">Contact</a></li>
+          <li><a href="/faq/">FAQ</a></li>
+        </ul>
+      </div>
+
+      <!-- My Account -->
+      <div class="footer-col">
+        <h4>My Account</h4>
+        <ul>
+          <li><a href="/login/">Login</a></li>
+          <li><a href="/register/">Register</a></li>
+          <li><a href="/my-orders/">My Orders</a></li>
+          <li><a href="/wishlist/">Wishlist</a></li>
+          <li><a href="/profile/">Profile</a></li>
+        </ul>
+      </div>
+
+      <!-- Newsletter -->
+      <div class="footer-col">
+        <h4>Stay in the Loop</h4>
+        <p style="font-size:.82rem; color:#aaa; margin-bottom:14px; line-height:1.6;">Get exclusive offers, new arrivals and style inspiration.</p>
+        <form class="newsletter-form" method="POST" action="/newsletter/">
+          {% csrf_token %}
+          <input type="email" name="email" placeholder="your@email.com" class="newsletter-input" required>
+          <button type="submit" class="newsletter-btn">Subscribe</button>
+        </form>
+      </div>
+
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 Tantira &nbsp;·&nbsp; Threads of Tradition &nbsp;·&nbsp;</p>
+    </div>
+  </footer>
+
+
+<!-- ── Back to Top ── -->
+<button id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})"
+  style="display:none; position:fixed; bottom:32px; right:32px; z-index:999;
+         width:44px; height:44px; border-radius:50%; background:#1C1410; color:#C9963A;
+         border:none; font-size:1.2rem; cursor:pointer; box-shadow:0 4px 16px rgba(0,0,0,.2);
+         transition:opacity .3s;">↑</button>
+
+<!-- ── Loading Spinner ── -->
+<div id="spinner" style="display:none; position:fixed; inset:0; background:rgba(250,246,240,.8);
+     z-index:9999; align-items:center; justify-content:center;">
+  <div style="width:40px; height:40px; border:3px solid #E8DDD0; border-top-color:#8B1A1A;
+       border-radius:50%; animation:spin .8s linear infinite;"></div>
+</div>
+<style>@keyframes spin { to { transform:rotate(360deg); } }</style>
+
+<script>
+  // Back to top
+  window.addEventListener('scroll', () => {
+    document.getElementById('backToTop').style.display = window.scrollY > 400 ? 'block' : 'none';
+  });
+  // Spinner on cart/checkout links
+  document.querySelectorAll('a[href*="add-to-cart"], a[href*="checkout"], .cart-btn').forEach(el => {
+    el.addEventListener('click', () => {
+      const sp = document.getElementById('spinner');
+      sp.style.display = 'flex';
+      setTimeout(() => sp.style.display = 'none', 1500);
+    });
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,146 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<!-- BANNER -->
+<section class="banner">
+  <img src="{% static 'store/images/banner.jpg' %}" class="banner-img" alt="Tantira Banner">
+  <div class="banner-text">
+    <h1>TANTIRA</h1>
+    <p>Threads of Tradition</p>
+    <a href="#products" class="banner-cta">Explore Collection</a>
+  </div>
+</section>
+
+<!-- CATEGORIES -->
+<section class="categories" id="products">
+  <div class="section-title">
+    <p>Curated for You</p><h2>Explore Categories</h2>
+    <div class="section-divider"></div>
+  </div>
+  <div class="category-container">
+    <a href="/?category=Saree#shop" class="category-box">
+      <img src="{% static 'store/images/sarees.jpg' %}" alt="Sarees">
+      <h3>Sarees</h3>
+      <span class="cat-cta">Shop Now →</span>
+    </a>
+    <a href="/?category=Lehenga#shop" class="category-box">
+      <img src="{% static 'store/images/lehengas.jpg' %}" alt="Lehengas">
+      <h3>Lehengas</h3>
+      <span class="cat-cta">Shop Now →</span>
+    </a>
+  </div>
+</section>
+
+<!-- OCCASION -->
+<section class="occasion">
+  <div class="section-title">
+    <p>Dressed for Every Moment</p><h2>Shop by Occasion</h2>
+    <div class="section-divider"></div>
+  </div>
+  <div class="occasion-container">
+    <a href="/?occasion=Engagement#shop" class="occasion-card"><img src="{% static 'store/images/f1.jpg' %}" alt="Engagement"><p>Engagement</p></a>
+    <a href="/?occasion=Mehendi#shop" class="occasion-card"><img src="{% static 'store/images/f2.jpg' %}" alt="Mehendi"><p>Mehendi</p></a>
+    <a href="/?occasion=Wedding#shop" class="occasion-card"><img src="{% static 'store/images/f3.jpg' %}" alt="Wedding"><p>Wedding</p></a>
+    <a href="/?occasion=Reception#shop" class="occasion-card"><img src="{% static 'store/images/f4.jpg' %}" alt="Reception"><p>Reception</p></a>
+  </div>
+</section>
+
+<!-- ── RECOMMENDED (based on browsing history) ── -->
+{% if recommended %}
+<section class="products" style="background:#fff;">
+  <div class="section-title">
+    <p>Based on Your Browsing</p><h2>Recommended for You</h2>
+    <div class="section-divider"></div>
+  </div>
+  <div class="product-grid" style="max-width:1200px; margin:0 auto;">
+    {% for saree in recommended %}
+    <div class="product-card">
+      <a href="{% url 'product_detail' saree.id %}" style="text-decoration:none; color:inherit; display:block; overflow:hidden;">
+        {% if saree.image %}<img src="{{ saree.image.url }}" alt="{{ saree.name }}"
+          {% if saree.hover_image %}onmouseover="this.src='{{ saree.hover_image.url }}'" onmouseout="this.src='{{ saree.image.url }}'"{% endif %}>{% endif %}
+      </a>
+      <div class="product-info">
+        <a href="{% url 'product_detail' saree.id %}" style="text-decoration:none; color:inherit;"><h3>{{ saree.name }}</h3></a>
+        <p style="font-size:.78rem; color:var(--muted);">{{ saree.fabric }} · {{ saree.color }}</p>
+        <p class="price">₹{{ saree.price }}</p>
+        <a href="{% url 'add_to_cart' saree.id %}" class="cart-btn" style="display:block; text-align:center; text-decoration:none; margin-top:8px;">Add to Cart</a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+<!-- SHOP ALL -->
+<section class="products" id="shop" style="background:var(--cream);">
+  <div class="section-title">
+    <p>Our Collection</p><h2>Shop All Sarees</h2>
+    <div class="section-divider"></div>
+  </div>
+
+  <!-- Search + Filter -->
+  <form method="GET" action="/#shop" class="shop-controls">
+    <div class="search-box">
+      <input type="text" name="q" value="{{ query }}" placeholder="Search sarees..." class="search-input">
+      <button type="submit" class="search-btn">🔍</button>
+    </div>
+    <div class="filter-tabs">
+      {% for cat in categories %}
+        <a href="?category={{ cat }}&sort={{ active_sort }}#shop"
+           class="filter-tab {% if active_cat == cat %}active{% endif %}">{{ cat }}</a>
+      {% endfor %}
+    </div>
+    <div class="sort-wrap">
+      <select name="sort" onchange="this.form.submit()" class="sort-select">
+        <option value=""          {% if active_sort == "" %}selected{% endif %}>Sort: Newest</option>
+        <option value="price_asc" {% if active_sort == "price_asc" %}selected{% endif %}>Price: Low → High</option>
+        <option value="price_desc"{% if active_sort == "price_desc" %}selected{% endif %}>Price: High → Low</option>
+      </select>
+    </div>
+  </form>
+
+  {% if query or active_cat != "All" %}
+  <p class="result-info">
+    Showing <strong>{{ result_count }}</strong> result{{ result_count|pluralize }}
+    {% if query %} for "<em>{{ query }}</em>"{% endif %}
+    {% if active_cat != "All" %} in <em>{{ active_cat }}</em>{% endif %}
+    &nbsp;—&nbsp;<a href="/#shop">Clear</a>
+  </p>
+  {% endif %}
+
+  <div class="product-grid" style="max-width:1200px; margin:0 auto;">
+    {% for saree in sarees %}
+    <div class="product-card">
+      <a href="{% url 'product_detail' saree.id %}" style="text-decoration:none; color:inherit; display:block; overflow:hidden;">
+        {% if saree.image %}<img src="{{ saree.image.url }}" alt="{{ saree.name }}"
+          {% if saree.hover_image %}onmouseover="this.src='{{ saree.hover_image.url }}'" onmouseout="this.src='{{ saree.image.url }}'"{% endif %}>{% endif %}
+      </a>
+      <div class="product-info">
+        <a href="{% url 'product_detail' saree.id %}" style="text-decoration:none; color:inherit;"><h3>{{ saree.name }}</h3></a>
+        <p style="font-size:.78rem; color:var(--muted);">{{ saree.fabric }} · {{ saree.color }}</p>
+        <p class="price">₹{{ saree.price }}</p>
+        <a href="{% url 'add_to_cart' saree.id %}" class="cart-btn" style="display:block; text-align:center; text-decoration:none; margin-top:8px;">Add to Cart</a>
+        {% if saree.id|stringformat:"s" in wishlist_ids %}
+          <a href="{% url 'remove_wishlist' saree.id %}" style="display:block; text-align:center; margin-top:6px; font-size:.72rem; color:var(--crimson); text-decoration:none;">❤ Wishlisted</a>
+        {% else %}
+          <a href="{% url 'add_wishlist' saree.id %}" style="display:block; text-align:center; margin-top:6px; font-size:.72rem; color:var(--muted); text-decoration:none;">♡ Wishlist</a>
+        {% endif %}
+      </div>
+    </div>
+    {% empty %}
+    <div style="grid-column:1/-1; text-align:center; padding:60px 0; font-family:'Cormorant Garamond',serif; font-size:1.4rem; font-style:italic; color:var(--muted);">
+      No sarees found. <a href="/#shop" style="color:var(--crimson);">Clear search</a>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="about">
+  <h2>About Us</h2>
+  <p>Tantira celebrates traditional Indian fashion with elegant sarees and bridal wear crafted for modern celebrations. Every thread tells a story of heritage, artistry, and grace.</p>
+</section>
+
+{% endblock %}

@@ -1,0 +1,92 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About Us — Tantira</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Tenor+Sans&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'store/style.css' %}">
+  <style>
+    :root { --crimson:#8B1A1A; --gold:#C9963A; --charcoal:#1C1410; --ivory:#FAF6F0; --cream:#F5EFE6; --border:#E8DDD0; --muted:#7A6A5A; }
+    body { background:var(--ivory); }
+    .about-hero { background:var(--charcoal); padding:100px 48px; text-align:center; }
+    .about-hero h1 { font-family:'Cormorant Garamond',serif; font-size:clamp(2.5rem,5vw,4rem); font-weight:300; color:#fff; letter-spacing:.1em; margin-bottom:16px; }
+    .about-hero p { font-family:'Tenor Sans',sans-serif; font-size:.9rem; letter-spacing:.2em; text-transform:uppercase; color:var(--gold); }
+    .gold-line { width:60px; height:1px; background:var(--gold); margin:20px auto 0; }
+    .about-section { max-width:900px; margin:0 auto; padding:80px 24px; }
+    .about-section h2 { font-family:'Cormorant Garamond',serif; font-size:2.2rem; font-weight:400; color:var(--charcoal); margin-bottom:16px; }
+    .about-section p { font-size:.95rem; color:var(--muted); line-height:1.9; margin-bottom:20px; }
+    .about-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:32px; margin:60px 0; }
+    .about-card { background:#fff; border:1px solid var(--border); padding:32px 24px; text-align:center; border-radius:2px; }
+    .about-card .icon { font-size:2rem; margin-bottom:16px; }
+    .about-card h3 { font-family:'Cormorant Garamond',serif; font-size:1.3rem; font-weight:600; color:var(--charcoal); margin-bottom:10px; }
+    .about-card p { font-size:.85rem; color:var(--muted); line-height:1.7; }
+    .about-banner { background:var(--cream); border:1px solid var(--border); padding:60px 48px; text-align:center; margin:0 0 80px; }
+    .about-banner h2 { font-family:'Cormorant Garamond',serif; font-size:2rem; font-weight:300; color:var(--charcoal); margin-bottom:12px; }
+    .about-banner p { font-size:.9rem; color:var(--muted); max-width:600px; margin:0 auto; line-height:1.8; }
+    footer { text-align:center; padding:40px; font-family:'Tenor Sans',sans-serif; font-size:.72rem; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); border-top:1px solid var(--border); }
+    @media(max-width:768px) { .about-grid { grid-template-columns:1fr; } .about-hero { padding:60px 24px; } }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="logo">TANTIRA</div>
+    <ul class="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/cart/">Cart</a></li>
+      <li><a href="/wishlist/">Wishlist</a></li>
+      <li><a href="/about/">About</a></li>
+      <li><a href="/faq/">FAQ</a></li>
+      <li><a href="/contact/">Contact</a></li>
+      <li><a href="/my-orders/">My Orders</a></li>
+      {% if user.is_authenticated %}
+        <li><a href="/profile/" style="color:var(--gold);">{{ user.username }}</a></li>
+        <li><a href="/logout/">Logout</a></li>
+      {% else %}
+        <li><a href="/login/">Login</a></li>
+        <li><a href="/register/">Register</a></li>
+      {% endif %}
+    </ul>
+  </nav>
+
+  <div class="about-hero">
+    <h1>Our Story</h1>
+    <p>Threads of Tradition, Woven with Love</p>
+    <div class="gold-line"></div>
+  </div>
+
+  <div class="about-section">
+    <h2>Who We Are</h2>
+    <p>Tantira was born from a deep love for the timeless art of Indian weaving. We believe every saree tells a story — of the hands that wove it, the traditions it carries, and the woman who wears it with pride.</p>
+    <p>Founded in Hyderabad, we work directly with master weavers across India to bring you authentic, handcrafted sarees that celebrate the richness of our textile heritage. From the silk looms of Kanchipuram to the cotton weavers of Dhaka, every piece in our collection is a work of art.</p>
+    <p>We are more than a store — we are a bridge between generations of craft and the modern woman who values beauty, authenticity, and tradition.</p>
+  </div>
+
+  <div class="about-grid" style="max-width:900px; margin:0 auto; padding:0 24px 60px;">
+    <div class="about-card">
+      <div class="icon">✦</div>
+      <h3>Authentic Craft</h3>
+      <p>Every saree is handpicked from certified weavers. We guarantee authenticity and quality in every thread.</p>
+    </div>
+    <div class="about-card">
+      <div class="icon">✦</div>
+      <h3>Weaver First</h3>
+      <p>We pay fair prices to our artisans and support their families. When you buy from us, you support a craftsman.</p>
+    </div>
+    <div class="about-card">
+      <div class="icon">✦</div>
+      <h3>Heritage & Love</h3>
+      <p>Each collection is curated with love for Indian culture, ensuring you wear a piece of living history.</p>
+    </div>
+  </div>
+
+  <div class="about-banner">
+    <h2>"A saree is not just fabric — it is an emotion."</h2>
+    <p>We invite you to explore our collection and find the saree that speaks to your soul. Wear it with pride, wear it with joy, wear it as Tantira.</p>
+  </div>
+
+  <footer>© 2026 Tantira &nbsp;·&nbsp; Threads of Tradition</footer>
+</body>
+</html>

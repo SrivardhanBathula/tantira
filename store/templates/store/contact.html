@@ -1,0 +1,119 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Us — Tantira</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Tenor+Sans&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'store/style.css' %}">
+  <style>
+    :root { --crimson:#8B1A1A; --gold:#C9963A; --charcoal:#1C1410; --ivory:#FAF6F0; --cream:#F5EFE6; --border:#E8DDD0; --muted:#7A6A5A; }
+    body { background:var(--ivory); }
+    .contact-hero { background:var(--charcoal); padding:80px 48px; text-align:center; }
+    .contact-hero h1 { font-family:'Cormorant Garamond',serif; font-size:3rem; font-weight:300; color:#fff; letter-spacing:.1em; margin-bottom:12px; }
+    .contact-hero p { font-family:'Tenor Sans',sans-serif; font-size:.85rem; letter-spacing:.2em; text-transform:uppercase; color:var(--gold); }
+    .contact-layout { max-width:900px; margin:0 auto; padding:60px 24px 80px; display:grid; grid-template-columns:1fr 1fr; gap:56px; align-items:start; }
+    .contact-info h2 { font-family:'Cormorant Garamond',serif; font-size:1.8rem; font-weight:400; margin-bottom:24px; }
+    .contact-detail { margin-bottom:24px; }
+    .contact-detail label { font-family:'Tenor Sans',sans-serif; font-size:.7rem; letter-spacing:.18em; text-transform:uppercase; color:var(--muted); display:block; margin-bottom:6px; }
+    .contact-detail p { font-size:.92rem; color:var(--charcoal); line-height:1.6; }
+    .contact-divider { width:40px; height:1px; background:var(--gold); margin:28px 0; }
+    .contact-form-wrap h2 { font-family:'Cormorant Garamond',serif; font-size:1.8rem; font-weight:400; margin-bottom:24px; }
+    .form-row { margin-bottom:18px; }
+    .form-row label { display:block; font-family:'Tenor Sans',sans-serif; font-size:.7rem; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); margin-bottom:7px; }
+    .form-row input, .form-row textarea, .form-row select { width:100%; padding:11px 14px; border:1px solid var(--border); border-radius:1px; font-family:'DM Sans',sans-serif; font-size:.88rem; color:var(--charcoal); background:var(--ivory); outline:none; transition:border-color .2s; box-sizing:border-box; }
+    .form-row input:focus, .form-row textarea:focus { border-color:var(--gold); background:#fff; }
+    .form-row textarea { min-height:100px; resize:vertical; }
+    .submit-btn { padding:13px 36px; background:var(--charcoal); color:#fff; font-family:'Tenor Sans',sans-serif; font-size:.76rem; letter-spacing:.18em; text-transform:uppercase; border:none; border-radius:1px; cursor:pointer; transition:background .25s; }
+    .submit-btn:hover { background:var(--crimson); }
+    .msg-sent { background:#D4EDDA; color:#155724; border:1px solid #C3E6CB; padding:12px 16px; border-radius:2px; font-size:.88rem; margin-bottom:20px; }
+    footer { text-align:center; padding:40px; font-family:'Tenor Sans',sans-serif; font-size:.72rem; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); border-top:1px solid var(--border); }
+    @media(max-width:768px) { .contact-layout { grid-template-columns:1fr; gap:32px; } .contact-hero { padding:60px 24px; } }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="logo">TANTIRA</div>
+    <ul class="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/cart/">Cart</a></li>
+      <li><a href="/about/">About</a></li>
+      {% if user.is_authenticated %}
+        <li><a href="/profile/" style="color:var(--gold);">{{ user.username }}</a></li>
+        <li><a href="/logout/">Logout</a></li>
+      {% else %}
+        <li><a href="/login/">Login</a></li>
+      {% endif %}
+    </ul>
+  </nav>
+
+  <div class="contact-hero">
+    <h1>Contact Us</h1>
+    <p>We would love to hear from you</p>
+  </div>
+
+  <div class="contact-layout">
+    <div class="contact-info">
+      <h2>Get In Touch</h2>
+      <div class="contact-detail">
+        <label>Email</label>
+        <p>support@tantira.com</p>
+      </div>
+      <div class="contact-detail">
+        <label>Phone</label>
+        <p>+91 63016 97400</p>
+      </div>
+      <div class="contact-detail">
+        <label>Address</label>
+        <p>Tantira Textiles<br>Hyderabad, Telangana<br>India — 500001</p>
+      </div>
+      <div class="contact-divider"></div>
+      <div class="contact-detail">
+        <label>Business Hours</label>
+        <p>Monday – Saturday<br>10:00 AM – 6:00 PM IST</p>
+      </div>
+      <div class="contact-detail">
+        <label>Order Support</label>
+        <p>For order queries, please have your Order ID ready when reaching out to us.</p>
+      </div>
+    </div>
+
+    <div class="contact-form-wrap">
+      <h2>Send a Message</h2>
+      {% if sent %}
+        <div class="msg-sent">Thank you! Your message has been sent. We will get back to you within 24 hours.</div>
+      {% endif %}
+      <form method="POST">
+        {% csrf_token %}
+        <div class="form-row">
+          <label>Your Name</label>
+          <input type="text" name="name" placeholder="Full name" required>
+        </div>
+        <div class="form-row">
+          <label>Email Address</label>
+          <input type="email" name="email" placeholder="your@email.com" required>
+        </div>
+        <div class="form-row">
+          <label>Subject</label>
+          <select name="subject">
+            <option>Order Query</option>
+            <option>Product Inquiry</option>
+            <option>Return / Exchange</option>
+            <option>Payment Issue</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label>Message</label>
+          <textarea name="message" placeholder="How can we help you?" required></textarea>
+        </div>
+        <button type="submit" class="submit-btn">Send Message</button>
+      </form>
+    </div>
+  </div>
+
+  <footer>© 2026 Tantira &nbsp;·&nbsp; Threads of Tradition</footer>
+</body>
+</html>

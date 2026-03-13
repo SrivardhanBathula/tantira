@@ -1,0 +1,216 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Profile — Tantira</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Tenor+Sans&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'store/style.css' %}">
+  <style>
+    :root {
+      --crimson: #8B1A1A;
+      --gold: #C9963A;
+      --charcoal: #1C1410;
+      --ivory: #FAF6F0;
+      --cream: #F5EFE6;
+      --border: #E8DDD0;
+      --muted: #7A6A5A;
+    }
+    body { background: var(--ivory); font-family: 'DM Sans', sans-serif; margin:0; }
+    .navbar { display:flex; justify-content:space-between; align-items:center; padding:0 48px; height:64px; background:#fff; border-bottom:1px solid var(--border); position:sticky; top:0; z-index:100; }
+    .logo { font-family:'Cormorant Garamond',serif; font-size:1.4rem; letter-spacing:.2em; color:var(--crimson); }
+    .nav-links { display:flex; gap:28px; list-style:none; margin:0; padding:0; }
+    .nav-links a { text-decoration:none; font-family:'Tenor Sans',sans-serif; font-size:.75rem; letter-spacing:.14em; text-transform:uppercase; color:var(--charcoal); }
+
+    .profile-wrapper { max-width:960px; margin:0 auto; padding:48px 24px 80px; }
+
+    .profile-header { display:flex; align-items:center; gap:28px; margin-bottom:40px; padding-bottom:32px; border-bottom:1px solid var(--border); }
+    .avatar { width:80px; height:80px; border-radius:50%; background:var(--charcoal); display:flex; align-items:center; justify-content:center; font-family:'Cormorant Garamond',serif; font-size:2rem; color:#C9963A; flex-shrink:0; }
+    .profile-meta h1 { font-family:'Cormorant Garamond',serif; font-size:1.8rem; font-weight:400; color:var(--charcoal); margin:0 0 4px; }
+    .profile-meta p  { font-size:.85rem; color:var(--muted); margin:0 0 10px; }
+    .badge { display:inline-block; padding:4px 14px; border-radius:20px; font-family:'Tenor Sans',sans-serif; font-size:.68rem; letter-spacing:.1em; text-transform:uppercase; background:#FFF8E7; color:#856404; border:1px solid #FFD970; margin-right:6px; }
+
+    .stats-row { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:40px; }
+    .stat-card { background:#fff; border:1px solid var(--border); padding:24px; border-radius:4px; text-align:center; }
+    .stat-card .num { font-family:'Cormorant Garamond',serif; font-size:2.2rem; font-weight:600; color:var(--crimson); line-height:1; }
+    .stat-card .lbl { font-family:'Tenor Sans',sans-serif; font-size:.68rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); margin-top:6px; }
+
+    .profile-tabs { display:flex; border-bottom:2px solid var(--border); margin-bottom:32px; }
+    .tab-btn { padding:12px 24px; font-family:'Tenor Sans',sans-serif; font-size:.72rem; letter-spacing:.14em; text-transform:uppercase; background:none; border:none; border-bottom:2px solid transparent; margin-bottom:-2px; cursor:pointer; color:var(--muted); }
+    .tab-btn.active { color:var(--charcoal); border-bottom-color:var(--crimson); }
+
+    .tab-panel { display:none; }
+    .tab-panel.active { display:block; }
+
+    .profile-form { max-width:500px; }
+    .form-row { margin-bottom:20px; }
+    .form-row label { display:block; font-family:'Tenor Sans',sans-serif; font-size:.7rem; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); margin-bottom:7px; }
+    .form-row input { width:100%; padding:12px 14px; border:1px solid var(--border); border-radius:2px; font-family:'DM Sans',sans-serif; font-size:.9rem; color:var(--charcoal); background:var(--ivory); outline:none; box-sizing:border-box; transition:border-color .2s; }
+    .form-row input:focus { border-color:var(--gold); background:#fff; }
+    .form-row input[readonly] { background:#EDE8E0; color:var(--muted); }
+    .save-btn { padding:13px 32px; background:var(--charcoal); color:#fff; font-family:'Tenor Sans',sans-serif; font-size:.76rem; letter-spacing:.18em; text-transform:uppercase; border:none; border-radius:2px; cursor:pointer; transition:background .25s; text-decoration:none; display:inline-block; }
+    .save-btn:hover { background:var(--crimson); }
+
+    .msg { padding:10px 16px; border-radius:2px; font-size:.84rem; margin-bottom:20px; }
+    .msg.success { background:#D4EDDA; color:#155724; border:1px solid #C3E6CB; }
+    .msg.error   { background:#F8D7DA; color:#721C24; border:1px solid #F5C6CB; }
+
+    .order-row { display:flex; align-items:center; justify-content:space-between; padding:16px 0; border-bottom:1px solid var(--border); gap:12px; flex-wrap:wrap; }
+    .order-id   { font-family:'Cormorant Garamond',serif; font-size:1.1rem; font-weight:600; color:var(--charcoal); }
+    .order-date { font-size:.76rem; color:var(--muted); margin-top:2px; }
+    .order-amt  { font-family:'Cormorant Garamond',serif; font-size:1.15rem; color:var(--crimson); font-weight:600; }
+    .status-pill { padding:4px 12px; border-radius:20px; font-family:'Tenor Sans',sans-serif; font-size:.65rem; letter-spacing:.1em; text-transform:uppercase; }
+    .s-pending    { background:#FFF3CD; color:#856404; }
+    .s-confirmed  { background:#CCE5FF; color:#004085; }
+    .s-processing { background:#E2D9F3; color:#4A235A; }
+    .s-shipped    { background:#D1ECF1; color:#0C5460; }
+    .s-delivered  { background:#D4EDDA; color:#155724; }
+    .s-cancelled  { background:#F8D7DA; color:#721C24; }
+    .track-link { font-family:'Tenor Sans',sans-serif; font-size:.7rem; letter-spacing:.1em; text-transform:uppercase; color:var(--crimson); text-decoration:none; }
+
+    footer { text-align:center; padding:40px 20px; font-family:'Tenor Sans',sans-serif; font-size:.72rem; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); border-top:1px solid var(--border); margin-top:60px; }
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="logo">TANTIRA</div>
+  <ul class="nav-links">
+    <li><a href="/">Home</a></li>
+    <li><a href="/cart/">Cart</a></li>
+    <li><a href="/wishlist/">Wishlist</a></li>
+    <li><a href="/my-orders/">My Orders</a></li>
+    <li><a href="/profile/" style="color:var(--gold);">{{ user.username }}</a></li>
+    <li><a href="/logout/">Logout</a></li>
+  </ul>
+</nav>
+
+<div class="profile-wrapper">
+
+  <!-- Header -->
+  <div class="profile-header">
+    <div class="avatar">{{ user.username|slice:":1"|upper }}</div>
+    <div class="profile-meta">
+      <h1>{{ user.get_full_name|default:user.username }}</h1>
+      <p>{{ user.email|default:"No email set" }}</p>
+      <span class="badge">✦ Member</span>
+      {% if order_count > 0 %}
+      <span class="badge" style="background:#D4EDDA; color:#155724; border-color:#C3E6CB;">{{ order_count }} Order{{ order_count|pluralize }}</span>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="num">{{ order_count }}</div>
+      <div class="lbl">Total Orders</div>
+    </div>
+    <div class="stat-card">
+      <div class="num">{{ wishlist_count }}</div>
+      <div class="lbl">Wishlist Items</div>
+    </div>
+    <div class="stat-card">
+      <div class="num">₹{{ total_spent }}</div>
+      <div class="lbl">Total Spent</div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="profile-tabs">
+    <button class="tab-btn active" onclick="switchTab(this,'tab-info')">Personal Info</button>
+    <button class="tab-btn"        onclick="switchTab(this,'tab-password')">Change Password</button>
+    <button class="tab-btn"        onclick="switchTab(this,'tab-orders')">Recent Orders</button>
+  </div>
+
+  <!-- Tab: Personal Info -->
+  <div class="tab-panel active" id="tab-info">
+    {% if messages %}
+      {% for msg in messages %}
+        <div class="msg {% if msg.tags == 'error' %}error{% else %}success{% endif %}">{{ msg }}</div>
+      {% endfor %}
+    {% endif %}
+    <form method="POST" class="profile-form">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="update_info">
+      <div class="form-row">
+        <label>Username</label>
+        <input type="text" value="{{ user.username }}" readonly>
+      </div>
+      <div class="form-row">
+        <label>First Name</label>
+        <input type="text" name="first_name" value="{{ user.first_name }}" placeholder="Your first name">
+      </div>
+      <div class="form-row">
+        <label>Last Name</label>
+        <input type="text" name="last_name" value="{{ user.last_name }}" placeholder="Your last name">
+      </div>
+      <div class="form-row">
+        <label>Email Address</label>
+        <input type="email" name="email" value="{{ user.email }}" placeholder="your@email.com">
+      </div>
+      <button type="submit" class="save-btn">Save Changes</button>
+    </form>
+  </div>
+
+  <!-- Tab: Change Password -->
+  <div class="tab-panel" id="tab-password">
+    <form method="POST" class="profile-form">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="change_password">
+      <div class="form-row">
+        <label>Current Password</label>
+        <input type="password" name="old_password" placeholder="Enter current password" required>
+      </div>
+      <div class="form-row">
+        <label>New Password</label>
+        <input type="password" name="new_password1" placeholder="Enter new password" required>
+      </div>
+      <div class="form-row">
+        <label>Confirm New Password</label>
+        <input type="password" name="new_password2" placeholder="Repeat new password" required>
+      </div>
+      <button type="submit" class="save-btn">Update Password</button>
+    </form>
+  </div>
+
+  <!-- Tab: Recent Orders -->
+  <div class="tab-panel" id="tab-orders">
+    {% if recent_orders %}
+      {% for order in recent_orders %}
+      <div class="order-row">
+        <div>
+          <div class="order-id">Order #{{ order.id }}</div>
+          <div class="order-date">{{ order.created_at|date:"d M Y" }}</div>
+        </div>
+        <span class="status-pill s-{{ order.status }}">{{ order.get_status_display }}</span>
+        <div class="order-amt">₹{{ order.total_amount }}</div>
+        <a href="/track-order/{{ order.id }}/" class="track-link">Track →</a>
+      </div>
+      {% endfor %}
+      <div style="margin-top:24px;">
+        <a href="/my-orders/" class="save-btn">View All Orders</a>
+      </div>
+    {% else %}
+      <p style="color:var(--muted); font-style:italic; padding:16px 0;">
+        No orders yet. <a href="/" style="color:var(--crimson);">Start shopping →</a>
+      </p>
+    {% endif %}
+  </div>
+
+</div>
+
+<footer>© 2026 Tantira &nbsp;·&nbsp; Threads of Tradition</footer>
+
+<script>
+  function switchTab(btn, panelId) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(panelId).classList.add('active');
+    btn.classList.add('active');
+  }
+</script>
+</body>
+</html>

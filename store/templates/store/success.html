@@ -1,0 +1,46 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order Confirmed — SareeStore</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Tenor+Sans&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'store/style.css' %}">
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="logo">TANTIRA</div>
+    <ul class="nav-links">
+      <li><a href="/">Home</a></li>
+    </ul>
+  </nav>
+
+  <section class="products">
+    <div class="success-card">
+      <span class="success-icon">✅</span>
+      <h2>Order Confirmed!</h2>
+
+      <div class="success-divider"></div>
+
+      <p class="success-detail">Thank you, <strong>{{ order.customer_name }}</strong> 🎉</p>
+      <p class="success-detail">Order ID: <strong>#{{ order.id }}</strong></p>
+      <p class="success-detail">Total Amount: <strong>₹{{ order.total_amount }}</strong></p>
+      <p class="success-detail">Payment: <strong>Cash on Delivery</strong></p>
+
+      <div class="success-divider"></div>
+
+      <a href="{% url 'home' %}" class="cart-btn" style="margin-top: 8px; display:inline-block; text-decoration:none; text-align:center; width:auto; padding:14px 40px;">← Back to Shop</a>
+      &nbsp;
+      <a href="{% url 'my_orders' %}" class="cart-btn" style="margin-top: 8px; display:inline-block; text-decoration:none; text-align:center; width:auto; padding:14px 40px; background:var(--crimson); border-color:var(--crimson);">📦 My Orders</a>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p>© 2026 SareeStore &nbsp;·&nbsp; Threads of Tradition</p>
+  </footer>
+
+</body>
+</html>

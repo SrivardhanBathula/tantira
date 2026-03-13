@@ -1,0 +1,215 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Orders — TANTIRA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Tenor+Sans&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'store/style.css' %}">
+  <style>
+    .orders-wrapper { max-width: 860px; margin: 0 auto; }
+
+    .order-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      margin-bottom: 24px;
+      overflow: hidden;
+      transition: box-shadow .25s;
+    }
+    .order-card:hover { box-shadow: var(--shadow); }
+
+    .order-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 28px;
+      border-bottom: 1px solid var(--border);
+      background: var(--cream);
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .order-id {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: var(--charcoal);
+    }
+
+    .order-date {
+      font-size: .78rem;
+      color: var(--muted);
+      letter-spacing: .06em;
+    }
+
+    .status-badge {
+      padding: 5px 14px;
+      border-radius: 20px;
+      font-family: 'Tenor Sans', sans-serif;
+      font-size: .7rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+    .status-pending    { background: #FFF3CD; color: #856404; }
+    .status-confirmed  { background: #D1ECF1; color: #0C5460; }
+    .status-processing { background: #D4EDDA; color: #155724; }
+    .status-shipped    { background: #CCE5FF; color: #004085; }
+    .status-delivered  { background: #D4EDDA; color: #155724; }
+    .status-cancelled  { background: #F8D7DA; color: #721C24; }
+
+    .order-card-body {
+      padding: 20px 28px;
+    }
+
+    .order-items-preview {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .order-item-chip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--cream);
+      border: 1px solid var(--border);
+      padding: 6px 12px 6px 6px;
+      border-radius: 2px;
+      font-size: .82rem;
+      color: var(--charcoal);
+    }
+
+    .order-item-chip img {
+      width: 36px;
+      height: 48px;
+      object-fit: cover;
+      border-radius: 1px;
+    }
+
+    .order-card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 28px;
+      border-top: 1px solid var(--border);
+      background: var(--ivory);
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .order-total {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: var(--crimson);
+    }
+
+    .order-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+    .btn-sm {
+      padding: 9px 22px;
+      font-family: 'Tenor Sans', sans-serif;
+      font-size: .72rem;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      border-radius: 1px;
+      text-decoration: none;
+      display: inline-block;
+      cursor: pointer;
+      border: 1px solid;
+      transition: background .2s, color .2s;
+    }
+    .btn-dark  { background: var(--charcoal); color: #fff; border-color: var(--charcoal); }
+    .btn-dark:hover { background: var(--crimson); border-color: var(--crimson); }
+    .btn-outline { background: transparent; color: var(--charcoal); border-color: var(--border); }
+    .btn-outline:hover { background: var(--charcoal); color: #fff; border-color: var(--charcoal); }
+    .btn-danger { background: transparent; color: #C0392B; border-color: #C0392B; }
+    .btn-danger:hover { background: #C0392B; color: #fff; }
+
+    .messages-list { max-width: 860px; margin: 0 auto 24px; }
+    .msg { padding: 12px 20px; border-radius: 2px; font-size: .88rem; margin-bottom: 8px; }
+    .msg-success { background: #D4EDDA; color: #155724; border: 1px solid #C3E6CB; }
+    .msg-error   { background: #F8D7DA; color: #721C24; border: 1px solid #F5C6CB; }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="logo">TANTIRA</div>
+    <ul class="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/cart/">Cart</a></li>
+      <li><a href="/wishlist/">❤ Wishlist</a></li>
+      <li><a href="/my-orders/" style="color:var(--crimson);">My Orders</a></li>
+    </ul>
+  </nav>
+
+  <section class="products">
+    <h2>My Orders</h2>
+
+    <div class="messages-list">
+      {% for message in messages %}
+        <div class="msg {% if message.tags == 'success' %}msg-success{% else %}msg-error{% endif %}">
+          {{ message }}
+        </div>
+      {% endfor %}
+    </div>
+
+    <div class="orders-wrapper">
+      {% if orders %}
+        {% for order in orders %}
+        <div class="order-card">
+
+          <div class="order-card-header">
+            <div>
+              <div class="order-id">Order #{{ order.id }}</div>
+              <div class="order-date">{{ order.created_at|date:"d M Y, h:i A" }}</div>
+            </div>
+            <span class="status-badge status-{{ order.status }}">
+              {{ order.get_status_display }}
+            </span>
+          </div>
+
+          <div class="order-card-body">
+            <div class="order-items-preview">
+              {% for item in order.items.all %}
+              <div class="order-item-chip">
+                {% if item.saree.image %}
+                  <img src="{{ item.saree.image.url }}" alt="{{ item.saree.name }}">
+                {% endif %}
+                <span>{{ item.saree.name }} × {{ item.quantity }}</span>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div class="order-card-footer">
+            <span class="order-total">₹{{ order.total_amount }}</span>
+            <div class="order-actions">
+              <a href="{% url 'track_order' order.id %}" class="btn-sm btn-dark">Track Order</a>
+              {% if order.can_cancel %}
+                <a href="{% url 'cancel_order' order.id %}" class="btn-sm btn-danger">Cancel</a>
+              {% endif %}
+            </div>
+          </div>
+
+        </div>
+        {% endfor %}
+
+      {% else %}
+        <p class="empty-state">You haven't placed any orders yet.</p>
+      {% endif %}
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p>© 2026 TANTIRA &nbsp;·&nbsp; Threads of Tradition</p>
+  </footer>
+
+</body>
+</html>

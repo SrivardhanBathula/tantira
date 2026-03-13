@@ -1,0 +1,305 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ saree.name }} — Tantira</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Tenor+Sans&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'store/style.css' %}">
+  <style>
+    .detail-wrapper { max-width:1100px; margin:0 auto; padding:48px; }
+    .detail-grid { display:grid; grid-template-columns:1fr 1fr; gap:56px; align-items:start; }
+    .detail-image-wrap { position:sticky; top:90px; }
+    .detail-main-img { width:100%; aspect-ratio:3/4; object-fit:cover; border-radius:2px; display:block; transition:opacity .3s; }
+    .detail-thumb-row { display:flex; gap:10px; margin-top:12px; }
+    .detail-thumb { width:72px; height:96px; object-fit:cover; border-radius:1px; border:2px solid transparent; cursor:pointer; transition:border-color .2s; }
+    .detail-thumb.active, .detail-thumb:hover { border-color:var(--gold); }
+    .detail-category { font-family:'Tenor Sans',sans-serif; font-size:.72rem; letter-spacing:.22em; text-transform:uppercase; color:var(--gold); margin-bottom:12px; }
+    .detail-name { font-family:'Cormorant Garamond',serif; font-size:clamp(2rem,3vw,2.8rem); font-weight:400; color:var(--charcoal); line-height:1.1; margin-bottom:16px; }
+    .detail-price { font-family:'Cormorant Garamond',serif; font-size:2rem; font-weight:600; color:var(--crimson); margin-bottom:16px; }
+    .rating-row { display:flex; align-items:center; gap:10px; margin-bottom:20px; }
+    .stars { color:#C9963A; font-size:1.1rem; letter-spacing:2px; }
+    .rating-count { font-size:.82rem; color:var(--muted); }
+    .detail-divider { width:48px; height:1px; background:var(--gold); margin:20px 0; }
+    .detail-meta { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:24px; }
+    .detail-meta-item label { font-family:'Tenor Sans',sans-serif; font-size:.68rem; letter-spacing:.18em; text-transform:uppercase; color:var(--muted); display:block; margin-bottom:4px; }
+    .detail-meta-item span { font-size:.92rem; color:var(--charcoal); }
+    .detail-desc { font-size:.92rem; color:var(--muted); line-height:1.8; margin-bottom:28px; }
+    .stock-badge { display:inline-block; padding:4px 12px; border-radius:20px; font-family:'Tenor Sans',sans-serif; font-size:.7rem; letter-spacing:.12em; text-transform:uppercase; margin-bottom:20px; }
+    .in-stock  { background:#D4EDDA; color:#155724; }
+    .low-stock { background:#FFF3CD; color:#856404; }
+    .no-stock  { background:#F8D7DA; color:#721C24; }
+    .detail-actions { display:flex; flex-direction:column; gap:10px; }
+    .btn-detail { display:block; width:100%; padding:14px 28px; font-family:'Tenor Sans',sans-serif; font-size:.78rem; letter-spacing:.18em; text-transform:uppercase; text-align:center; text-decoration:none; border-radius:1px; border:1px solid; cursor:pointer; transition:background .25s,color .25s; box-sizing:border-box; }
+    .btn-primary { background:var(--charcoal); color:#fff; border-color:var(--charcoal); }
+    .btn-primary:hover { background:var(--crimson); border-color:var(--crimson); }
+    .btn-primary.already-in { background:var(--crimson); border-color:var(--crimson); }
+    .btn-wish { background:transparent; color:var(--charcoal); border-color:var(--border); }
+    .btn-wish:hover { background:var(--cream); }
+    .btn-wish.wishlisted { color:var(--crimson); border-color:var(--crimson); }
+
+    /* ── Reviews ── */
+    .reviews-section { max-width:1100px; margin:0 auto; padding:0 48px 32px; }
+    .reviews-section h2 { font-family:'Cormorant Garamond',serif; font-size:1.8rem; font-weight:400; margin-bottom:8px; }
+    .reviews-grid { display:grid; grid-template-columns:280px 1fr; gap:48px; margin-top:32px; align-items:start; }
+    .rating-summary { background:var(--cream); border:1px solid var(--border); padding:28px; border-radius:2px; text-align:center; }
+    .big-rating { font-family:'Cormorant Garamond',serif; font-size:4rem; font-weight:600; color:var(--charcoal); line-height:1; }
+    .big-stars { font-size:1.4rem; color:#C9963A; letter-spacing:3px; margin:8px 0; }
+    .rating-total { font-size:.8rem; color:var(--muted); letter-spacing:.1em; }
+    .review-card { background:#fff; border:1px solid var(--border); padding:24px; border-radius:2px; margin-bottom:16px; }
+    .review-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px; }
+    .reviewer-name { font-family:'Tenor Sans',sans-serif; font-size:.8rem; letter-spacing:.1em; text-transform:uppercase; color:var(--charcoal); }
+    .review-date { font-size:.75rem; color:var(--muted); }
+    .review-stars { color:#C9963A; margin-bottom:8px; }
+    .review-title { font-family:'Cormorant Garamond',serif; font-size:1.1rem; font-weight:600; margin-bottom:6px; }
+    .review-body { font-size:.88rem; color:var(--muted); line-height:1.7; }
+
+    /* ── Write review form ── */
+    .write-review { background:var(--cream); border:1px solid var(--border); padding:28px 32px; border-radius:2px; margin-bottom:32px; }
+    .write-review h3 { font-family:'Cormorant Garamond',serif; font-size:1.4rem; font-weight:400; margin-bottom:20px; }
+    .star-picker { display:flex; gap:6px; margin-bottom:16px; font-size:1.8rem; cursor:pointer; }
+    .star-picker span { color:var(--border); transition:color .15s; cursor:pointer; }
+    .star-picker span.on { color:#C9963A; }
+    .review-input { width:100%; padding:10px 14px; border:1px solid var(--border); border-radius:1px; font-family:'DM Sans',sans-serif; font-size:.9rem; color:var(--charcoal); background:#fff; outline:none; box-sizing:border-box; margin-bottom:12px; transition:border-color .2s; }
+    .review-input:focus { border-color:var(--gold); }
+    textarea.review-input { min-height:80px; resize:vertical; }
+
+    /* ── Related ── */
+    .related-section { max-width:1100px; margin:0 auto; padding:0 48px 80px; }
+    .related-section h2 { font-family:'Cormorant Garamond',serif; font-size:1.6rem; font-weight:400; margin-bottom:28px; }
+    .related-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:24px; }
+
+    @media(max-width:768px) {
+      .detail-wrapper,.reviews-section,.related-section { padding:24px 20px; }
+      .detail-grid { grid-template-columns:1fr; gap:32px; }
+      .detail-image-wrap { position:static; }
+      .reviews-grid { grid-template-columns:1fr; }
+      .related-grid { grid-template-columns:repeat(2,1fr); }
+      .detail-meta { grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="logo">TANTIRA</div>
+    <ul class="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/cart/">Cart {% if cart_count > 0 %}<span class="cart-badge">{{ cart_count }}</span>{% endif %}</a></li>
+      <li><a href="/wishlist/">❤ Wishlist</a></li>
+      <li><a href="/my-orders/">My Orders</a></li>
+      {% if user.is_authenticated %}
+        <li><a href="/logout/" style="color:var(--muted);">Logout ({{ user.username }})</a></li>
+      {% else %}
+        <li><a href="/login/">Login</a></li>
+      {% endif %}
+    </ul>
+  </nav>
+
+  <div class="detail-wrapper">
+    <p style="font-size:.78rem; color:var(--muted); margin-bottom:32px; letter-spacing:.06em;">
+      <a href="/" style="color:var(--muted); text-decoration:none;">Home</a> &nbsp;/&nbsp;
+      <a href="/?category={{ saree.category }}" style="color:var(--muted); text-decoration:none;">{{ saree.category }}</a> &nbsp;/&nbsp;
+      <span style="color:var(--charcoal);">{{ saree.name }}</span>
+    </p>
+
+    <div class="detail-grid">
+      <!-- Image -->
+      <div class="detail-image-wrap">
+        {% if saree.image %}
+          <img src="{{ saree.image.url }}" alt="{{ saree.name }}" class="detail-main-img" id="mainImg">
+        {% endif %}
+        <div class="detail-thumb-row">
+          {% if saree.image %}
+          <img src="{{ saree.image.url }}" class="detail-thumb active" onclick="switchImg(this,'{{ saree.image.url }}')">
+          {% endif %}
+          {% if saree.hover_image %}
+          <img src="{{ saree.hover_image.url }}" class="detail-thumb" onclick="switchImg(this,'{{ saree.hover_image.url }}')">
+          {% endif %}
+          {% if saree.image3 %}
+          <img src="{{ saree.image3.url }}" class="detail-thumb" onclick="switchImg(this,'{{ saree.image3.url }}')">
+          {% endif %}
+          {% if saree.image4 %}
+          <img src="{{ saree.image4.url }}" class="detail-thumb" onclick="switchImg(this,'{{ saree.image4.url }}')">
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Info -->
+      <div class="detail-info">
+        <div class="detail-category">{{ saree.category }}</div>
+        <h1 class="detail-name">{{ saree.name }}</h1>
+        <div class="detail-price">₹{{ saree.price }}</div>
+
+        {% if review_count > 0 %}
+        <div class="rating-row">
+          <span class="stars">
+            {% for i in "12345" %}{% if forloop.counter <= avg_rating %}★{% else %}☆{% endif %}{% endfor %}
+          </span>
+          <span class="rating-count">{{ avg_rating }} · {{ review_count }} review{{ review_count|pluralize }}</span>
+        </div>
+        {% endif %}
+
+        {% if saree.stock > 5 %}
+          <span class="stock-badge in-stock">In Stock</span>
+        {% elif saree.stock > 0 %}
+          <span class="stock-badge low-stock">Only {{ saree.stock }} left</span>
+        {% else %}
+          <span class="stock-badge no-stock">Out of Stock</span>
+        {% endif %}
+
+        <div class="detail-divider"></div>
+
+        <div class="detail-meta">
+          <div class="detail-meta-item"><label>Fabric</label><span>{{ saree.fabric }}</span></div>
+          <div class="detail-meta-item"><label>Color</label><span>{{ saree.color }}</span></div>
+          <div class="detail-meta-item"><label>Category</label><span>{{ saree.category }}</span></div>
+          <div class="detail-meta-item"><label>Payment</label><span>Cash on Delivery</span></div>
+        </div>
+
+        {% if saree.description %}<p class="detail-desc">{{ saree.description }}</p>{% endif %}
+
+        <div class="detail-divider"></div>
+
+        <div class="detail-actions">
+          {% if saree.stock > 0 %}
+            <a href="{% url 'add_to_cart' saree.id %}?next=detail"
+               class="btn-detail btn-primary {% if in_cart %}already-in{% endif %}">
+              {% if in_cart %}✓ Added to Cart{% else %}Add to Cart{% endif %}
+            </a>
+          {% else %}
+            <button class="btn-detail btn-primary" disabled style="opacity:.5;">Out of Stock</button>
+          {% endif %}
+
+          {% if saree.id|stringformat:"s" in wishlist_ids %}
+            <a href="{% url 'remove_wishlist' saree.id %}" class="btn-detail btn-wish wishlisted">❤ Remove from Wishlist</a>
+          {% else %}
+            <a href="{% url 'add_wishlist' saree.id %}?next=detail" class="btn-detail btn-wish">♡ Add to Wishlist</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── REVIEWS ── -->
+  <div class="reviews-section">
+    <h2>Customer Reviews</h2>
+    <div class="section-divider" style="margin:12px 0 0;"></div>
+
+    <div class="reviews-grid">
+      <!-- Summary -->
+      <div>
+        <div class="rating-summary">
+          <div class="big-rating">{{ avg_rating }}</div>
+          <div class="big-stars">
+            {% for i in "12345" %}{% if forloop.counter <= avg_rating %}★{% else %}☆{% endif %}{% endfor %}
+          </div>
+          <div class="rating-total">{{ review_count }} review{{ review_count|pluralize }}</div>
+        </div>
+
+        <!-- Write review -->
+        {% if user.is_authenticated %}
+        <div class="write-review" style="margin-top:20px;">
+          <h3>{% if user_review %}Edit Your Review{% else %}Write a Review{% endif %}</h3>
+          <form method="POST">
+            {% csrf_token %}
+            <div class="star-picker" id="starPicker">
+              <span data-v="1">★</span><span data-v="2">★</span>
+              <span data-v="3">★</span><span data-v="4">★</span><span data-v="5">★</span>
+            </div>
+            <input type="hidden" name="rating" id="ratingInput" value="{{ user_review.rating|default:5 }}">
+            <input type="text" name="title" class="review-input" placeholder="Review title"
+                   value="{{ user_review.title|default:'' }}">
+            <textarea name="body" class="review-input" placeholder="Share your experience..." required>{{ user_review.body|default:'' }}</textarea>
+            <button type="submit" class="btn-detail btn-primary" style="padding:12px;">
+              {% if user_review %}Update Review{% else %}Submit Review{% endif %}
+            </button>
+          </form>
+        </div>
+        {% else %}
+        <div class="write-review" style="margin-top:20px; text-align:center;">
+          <p style="font-size:.88rem; color:var(--muted); margin-bottom:14px;">Login to write a review</p>
+          <a href="{% url 'login' %}?next=/product/{{ saree.id }}/" class="btn-detail btn-primary" style="padding:12px;">Login to Review</a>
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- Review list -->
+      <div>
+        {% for review in reviews %}
+        <div class="review-card">
+          <div class="review-header">
+            <span class="reviewer-name">{{ review.user.username }}</span>
+            <span class="review-date">{{ review.created_at|date:"d M Y" }}</span>
+          </div>
+          <div class="review-stars">
+            {% for i in "12345" %}{% if forloop.counter <= review.rating %}★{% else %}☆{% endif %}{% endfor %}
+          </div>
+          {% if review.title %}<div class="review-title">{{ review.title }}</div>{% endif %}
+          <div class="review-body">{{ review.body }}</div>
+        </div>
+        {% empty %}
+        <p style="font-style:italic; color:var(--muted); padding-top:16px;">No reviews yet — be the first!</p>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <!-- ── RELATED ── -->
+  {% if related %}
+  <div class="related-section">
+    <h2>You May Also Like</h2>
+    <div class="related-grid">
+      {% for item in related %}
+      <a href="{% url 'product_detail' item.id %}" style="text-decoration:none; color:inherit;">
+        <div class="product-card">
+          {% if item.image %}<img src="{{ item.image.url }}" alt="{{ item.name }}">{% endif %}
+          <div class="product-info">
+            <h3>{{ item.name }}</h3>
+            <p class="price">₹{{ item.price }}</p>
+          </div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <footer class="footer">
+    <p>© 2026 Tantira &nbsp;·&nbsp; Threads of Tradition</p>
+  </footer>
+
+  <script>
+    function switchImg(thumb, src) {
+      const img = document.getElementById('mainImg');
+      img.style.opacity = '0';
+      setTimeout(() => { img.src = src; img.style.opacity = '1'; }, 150);
+      document.querySelectorAll('.detail-thumb').forEach(t => t.classList.remove('active'));
+      thumb.classList.add('active');
+    }
+
+    // Star picker
+    const stars   = document.querySelectorAll('#starPicker span');
+    const rInput  = document.getElementById('ratingInput');
+    let current   = parseInt(rInput ? rInput.value : 5);
+
+    function paintStars(n) {
+      stars.forEach((s, i) => s.classList.toggle('on', i < n));
+    }
+    if (stars.length) {
+      paintStars(current);
+      stars.forEach(s => {
+        s.addEventListener('mouseover', () => paintStars(+s.dataset.v));
+        s.addEventListener('mouseout',  () => paintStars(current));
+        s.addEventListener('click', () => {
+          current = +s.dataset.v;
+          rInput.value = current;
+          paintStars(current);
+        });
+      });
+    }
+  </script>
+</body>
+</html>
