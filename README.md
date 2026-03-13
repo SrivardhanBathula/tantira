@@ -16,11 +16,11 @@ A full-stack e-commerce web application for luxury Indian ethnic wear — Sarees
 
 | Home | Products | Product Detail |
 |------|----------|----------------|
-| ![Home](screenshots/home.png) | ![Shop](screenshots/shop.png) | ![Product](screenshots/product.png) |
+| ![Home](screenshots/home.png) | ![Shop](screenshots/shop.png) | ![Product](screenshots/products.png) |
 
 | Cart | Orders | Dashboard |
 |------|--------|-----------|
-| ![Cart](screenshots/cart.png) | ![Orders](screenshots/orders.png) | ![Dashboard](screenshots/dashboard.png) |
+| ![Cart](screenshots/Cart.png) | ![Orders](screenshots/Orders.png) | ![Dashboard](screenshots/dashboard.png) |
 
 ---
 
