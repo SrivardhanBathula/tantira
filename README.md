@@ -188,7 +188,7 @@ Configure in `.env` with Gmail App Password.
 
 ## 👩‍💻 Developed By
 
-**Janu** — Built with love in Hyderabad 🌸
+**srivardhan** — Built with love 
 
 ---
 
