@@ -193,5 +193,3 @@ Configure in `.env` with Gmail App Password.
 ---
 
 *Tantira — Where every thread tells a story.*
-
-Pair achievement test
